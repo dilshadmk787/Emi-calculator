@@ -1,0 +1,97 @@
+import React, { useState } from 'react';
+import { Button, Col, Row } from 'react-bootstrap';
+
+function App() {
+  const [loanAmount, setLoanAmount] = useState('');
+  const [interestRate, setInterestRate] = useState('');
+  const [months, setMonths] = useState('');
+  const [emi, setEmi] = useState(null);
+
+  const calculateEMI = () => {
+    const principal = parseFloat(loanAmount);
+    const rateOfInterest = parseFloat(interestRate) / 100 / 12; // Monthly interest rate
+    const numberOfPayments = parseFloat(months);
+
+    if (principal > 0 && rateOfInterest > 0 && numberOfPayments > 0) {
+      const emiValue =
+        (principal * rateOfInterest * Math.pow(1 + rateOfInterest, numberOfPayments)) /
+        (Math.pow(1 + rateOfInterest, numberOfPayments) - 1);
+      setEmi(emiValue.toFixed(2));
+    } else {
+      setEmi(null);
+    }
+  };
+
+  const resetInputs = () => {
+    setLoanAmount('');
+    setInterestRate('');
+    setMonths('');
+    setEmi(null);
+  };
+
+  return (
+    <div style={{ height: '100vh' }} className='container-fluid d-flex justify-content-center align-items-center w-100'>
+      <div style={{ width: '650px' }} className='bg-secondary rounded text-white'>
+
+        <Row><h1 className='text-center text-white p-5'>EMI - Calculator</h1></Row>
+        <Row className='justify-content-evenly text-center'>
+          <Col md={4} sm={12}>
+            <h4>Loan Amount</h4>
+            <input
+              style={{ width: '140px' }}
+              type="text"
+              value={loanAmount}
+              onChange={(e) => setLoanAmount(e.target.value)}
+            />
+          </Col>
+          <Col md={3} sm={12} className=''>
+            <h4>Interest Rate (%)</h4>
+            <input
+              style={{ width: '140px' }}
+              type="text"
+              value={interestRate}
+              onChange={(e) => setInterestRate(e.target.value)}
+            />
+          </Col>
+          <Col md={4} sm={12}>
+            <h4>Months</h4>
+            <input
+              style={{ width: '140px' }}
+              type="text"
+              value={months}
+              onChange={(e) => setMonths(e.target.value)}
+            />
+          </Col>
+        </Row>
+        <Row className='justify-content-evenly text-center mt-5'>
+          <Col>
+            <Button
+              variant="primary"
+              className="rounded-circle"
+              style={{ width: '90px', height: '90px' }}
+              onClick={calculateEMI}
+            >
+              Calculate
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              variant="danger"
+              className="rounded-circle"
+              style={{ width: '90px', height: '90px' }}
+              onClick={resetInputs}
+            >              Reset
+            </Button>
+          </Col>
+        </Row>
+        {emi !== null && (
+          <div className='bg-primary m-4 p-5'>
+            <h1 className='text-center'>{`EMI: $${emi} / month`}</h1>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
